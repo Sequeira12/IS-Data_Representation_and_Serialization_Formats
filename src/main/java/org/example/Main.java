@@ -4,10 +4,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+
 
 public class Main {
     public static Universidade Criacao(int num){
@@ -45,6 +48,7 @@ public class Main {
 
     }
 
+
     public static void UnMarshallingXML(String filename) throws JAXBException, FileNotFoundException {
         File file = new File(filename);
         JAXBContext jaxbContext = JAXBContext.newInstance(Universidade.class);
@@ -65,14 +69,43 @@ public class Main {
         }
 
     }
-    public static void main(String[] args) throws JAXBException, FileNotFoundException {
+
+    public static void MarshllingJSON(String file, Universidade uni) throws IOException {
+
+        Gson g = new GsonBuilder().setPrettyPrinting().create();
+        String j = g.toJson(uni);
+        //medir aqui o tempo
+        System.out.println(j);
+        FileWriter w = new FileWriter(new File("universidade.json"));
+        w.write(j);
+        w.flush();
+    }
+
+    public static void UnMarshallingJson(String filename) throws JAXBException, IOException {
+        FileReader r = new FileReader("universidade.json");
+        String file = String.valueOf(r.read());
+
+        System.out.println(e.getNome()+ "  " + e.getAnoInstituicao());
+        ArrayList<Professor> professors = e.getProfessores();
+        for(int i = 0; i < professors.size();i++) {
+            System.out.println(professors.get(i).getNome()+ "  " + professors.get(i).getIdade()+ "  " + professors.get(i).getAnoDoutorado() );
+            ArrayList<Aluno> alun = professors.get(i).getAlunos();
+            for(int k = 0; k < alun.size();k++){
+                System.out.println(alun.get(k).getNome()+ "  " + alun.get(k).getIdade()+ "  " + alun.get(k).getAvaliacao());
+            }
+        }
+
+    }
+
+
+    public static void main(String[] args) throws JAXBException, IOException {
         Universidade a = Criacao(10);
         String FileName = "universidade.xml";
-        MarshallingXML(FileName,a);
+       // MarshallingXML(FileName,a);
 
+        MarshllingJSON("universidade.json", a);
 
-
-        UnMarshallingXML(FileName);
+       // UnMarshallingXML(FileName);
 
 
 
