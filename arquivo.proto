@@ -1,0 +1,21 @@
+syntax = "proto3";
+package com.example;
+
+message Universidade {
+  string nome = 1;
+  int32 anoInstituicao = 2;
+  repeated Professor professores = 3;
+}
+
+message Professor {
+  string nome = 1;
+  int32 idade = 2;
+  int32 anoDoutorado = 3;
+  repeated Aluno alunos = 4;
+}
+
+message Aluno {
+  string nome = 1;
+  int32 idade = 2;
+  int32 avaliacao = 3;
+}

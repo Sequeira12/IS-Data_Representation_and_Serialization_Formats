@@ -87,7 +87,6 @@ public class Main {
 
         try (FileReader reader = new FileReader(filename)) {
             Universidade e = gson.fromJson(reader, Universidade.class);
-
             System.out.println(e.getNome()+ "  " + e.getAnoInstituicao());
             ArrayList<Professor> professors = e.getProfessores();
             for(int i = 0; i < professors.size();i++) {
@@ -101,6 +100,10 @@ public class Main {
 
     }
 
+    public static void MarshallingProtocolBuffer(String Filename){
+
+
+    }
 
     public static void main(String[] args) throws JAXBException, IOException {
         Universidade a = Criacao(10);
