@@ -97,8 +97,9 @@ public class Main {
 
     public static void main(String[] args) throws  IOException {
 
-
-        Arquivo.Universidade universidade = Criacao(10000);
+        int num = 10000;
+        Arquivo.Universidade universidade = Criacao(num);
+        System.out.printf("TESTE COM %d professores!\n",num);
         MarshallingProtocol(universidade,"universidade.bin");
 
         UnMarshalling("universidade.bin");
