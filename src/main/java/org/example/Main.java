@@ -12,6 +12,7 @@ import com.google.gson.*;
 
 
 public class Main {
+    public static boolean imprime = false;
     public static Universidade Criacao(int num){
         Universidade uni = new Universidade();
         uni.setNome("Universidade de Coimbra");
@@ -37,82 +38,106 @@ public class Main {
         return uni;
     }
     public static void MarshallingXML(String file, Universidade uni) throws JAXBException, FileNotFoundException {
-        JAXBContext contextObj = JAXBContext.newInstance(Universidade.class);
 
+        long tempoInicial, tempoFinal, tempoDecorrido;
+        tempoInicial = System.currentTimeMillis();
+        JAXBContext contextObj = JAXBContext.newInstance(Universidade.class);
         Marshaller marshallerObj = contextObj.createMarshaller();
         marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
         FileOutputStream s = new FileOutputStream(file);
         marshallerObj.marshal(uni,s);
+        tempoFinal = System.currentTimeMillis();
+        tempoDecorrido = tempoFinal - tempoInicial;
+        System.out.println("Tempo (Marshalling XML) em milissegundos:" + tempoDecorrido);
 
     }
 
 
     public static void UnMarshallingXML(String filename) throws JAXBException, FileNotFoundException {
+
         File file = new File(filename);
+
+        long tempoInicial, tempoFinal, tempoDecorrido;
+        tempoInicial = System.currentTimeMillis();
+
         JAXBContext jaxbContext = JAXBContext.newInstance(Universidade.class);
-
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
         Universidade e=(Universidade) jaxbUnmarshaller.unmarshal(file);
+        tempoFinal = System.currentTimeMillis();
+        tempoDecorrido = tempoFinal - tempoInicial;
+        System.out.println("Tempo (UnMarshalling XML) em milissegundos:" + tempoDecorrido);
 
 
-        System.out.println(e.getNome()+ "  " + e.getAnoInstituicao());
-        ArrayList<Professor> professors = e.getProfessores();
-        for(int i = 0; i < professors.size();i++) {
-            System.out.println(professors.get(i).getNome()+ "  " + professors.get(i).getIdade()+ "  " + professors.get(i).getAnoDoutorado() );
-            ArrayList<Aluno> alun = professors.get(i).getAlunos();
-            for(int k = 0; k < alun.size();k++){
-                System.out.println(alun.get(k).getNome()+ "  " + alun.get(k).getIdade()+ "  " + alun.get(k).getAvaliacao());
-            }
-        }
-
-    }
-
-    public static void MarshllingJSON(String file, Universidade uni) throws IOException {
-
-        Gson g = new GsonBuilder().setPrettyPrinting().create();
-        String j = g.toJson(uni);
-        //medir aqui o tempo
-        System.out.println(j);
-        FileWriter w = new FileWriter(new File("universidade.json"));
-        w.write(j);
-        w.flush();
-    }
-
-    public static void UnMarshallingJson(String filename) throws JAXBException, IOException {
-
-
-        Gson gson = new Gson();
-
-        try (FileReader reader = new FileReader(filename)) {
-            Universidade e = gson.fromJson(reader, Universidade.class);
-            System.out.println(e.getNome()+ "  " + e.getAnoInstituicao());
+        if(imprime) {
+            System.out.println(e.getNome() + "  " + e.getAnoInstituicao());
             ArrayList<Professor> professors = e.getProfessores();
-            for(int i = 0; i < professors.size();i++) {
-                System.out.println(professors.get(i).getNome()+ "  " + professors.get(i).getIdade()+ "  " + professors.get(i).getAnoDoutorado() );
+            for (int i = 0; i < professors.size(); i++) {
+                System.out.println(professors.get(i).getNome() + "  " + professors.get(i).getIdade() + "  " + professors.get(i).getAnoDoutorado());
                 ArrayList<Aluno> alun = professors.get(i).getAlunos();
-                for(int k = 0; k < alun.size();k++){
-                    System.out.println(alun.get(k).getNome()+ "  " + alun.get(k).getIdade()+ "  " + alun.get(k).getAvaliacao());
+                for (int k = 0; k < alun.size(); k++) {
+                    System.out.println(alun.get(k).getNome() + "  " + alun.get(k).getIdade() + "  " + alun.get(k).getAvaliacao());
                 }
             }
         }
 
     }
 
-    public static void MarshallingProtocolBuffer(String Filename){
+    public static void MarshallingJSON(String file, Universidade uni) throws IOException {
+        long tempoInicial, tempoFinal, tempoDecorrido;
+        tempoInicial = System.currentTimeMillis();
+        Gson g = new GsonBuilder().setPrettyPrinting().create();
+        String j = g.toJson(uni);
+        tempoFinal = System.currentTimeMillis();
+        tempoDecorrido = tempoFinal - tempoInicial;
+        System.out.println("Tempo (Marshalling JSON) em milissegundos:" + tempoDecorrido);
+        //medir aqui o tempo
+      //  System.out.println(j);
+        FileWriter w = new FileWriter(new File(file));
+        w.write(j);
+        w.flush();
+    }
+
+    public static void UnMarshallingJson(String filename) throws IOException {
+
+
+
+        FileReader reader = new FileReader(filename);
+        long tempoInicial, tempoFinal, tempoDecorrido;
+        tempoInicial = System.currentTimeMillis();
+        Gson gson = new Gson();
+        Universidade e = gson.fromJson(reader, Universidade.class);
+        tempoFinal = System.currentTimeMillis();
+        tempoDecorrido = tempoFinal - tempoInicial;
+        System.out.println("Tempo (UnMarshalling JSON) em milissegundos:" + tempoDecorrido);
+
+        if (imprime) {
+            System.out.println(e.getNome() + "  " + e.getAnoInstituicao());
+            ArrayList<Professor> professors = e.getProfessores();
+            for (int i = 0; i < professors.size(); i++) {
+                System.out.println(professors.get(i).getNome() + "  " + professors.get(i).getIdade() + "  " + professors.get(i).getAnoDoutorado());
+                ArrayList<Aluno> alun = professors.get(i).getAlunos();
+                for (int k = 0; k < alun.size(); k++) {
+                    System.out.println(alun.get(k).getNome() + "  " + alun.get(k).getIdade() + "  " + alun.get(k).getAvaliacao());
+                }
+            }
+        }
 
 
     }
 
-    public static void main(String[] args) throws JAXBException, IOException {
-        Universidade a = Criacao(10);
-        String FileName = "universidade.xml";
-       // MarshallingXML(FileName,a);
-        //MarshllingJSON("universidade.json", a);
-        UnMarshallingJson("universidade.json");
 
-       // UnMarshallingXML(FileName);
+    public static void main(String[] args) throws JAXBException, IOException {
+        int num = 10000;
+        Universidade a = Criacao(num);
+        String FileNameXML = "universidade.xml";
+        String FileNameJSON = "universidade.json";
+
+        System.out.printf("TESTE COM %d professores!\n",num);
+        MarshallingXML(FileNameXML,a);
+        MarshallingJSON(FileNameJSON,a);
+        UnMarshallingXML(FileNameXML);
+        UnMarshallingJson(FileNameJSON);
+
 
 
 

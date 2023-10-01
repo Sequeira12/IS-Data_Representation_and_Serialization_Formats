@@ -1,24 +1,25 @@
 package com.example;
 
 import javax.xml.bind.JAXBException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main {
+    public static boolean imprime = false;
 
-
-    public static void main(String[] args) throws JAXBException, IOException {
+    public static Arquivo.Universidade Criacao(int num){
 
         com.example.Arquivo.Universidade.Builder universidadeBuilder = com.example.Arquivo.Universidade.newBuilder();
         universidadeBuilder.setNome("Universidade de Coimbra");
         universidadeBuilder.setAnoInstituicao(1754);
-
         ArrayList<Arquivo.Professor> professores = new ArrayList<>();
 
-        //numero profs
-        int num = 5;
+
+
 
         for (int i = 1; i <= num; i++) {
 
@@ -49,20 +50,62 @@ public class Main {
         universidadeBuilder.addAllProfessores(professores);
 
 
-        com.example.Arquivo.Universidade universidade = universidadeBuilder.build();
+        return universidadeBuilder.build();
 
+    }
 
-        //REBENTA-SE AQUIIII!!!!!
+    public static void UnMarshalling(String file)  {
+
+        try (FileInputStream fis = new FileInputStream(file)) {
+            long tempoInicial, tempoFinal, tempoDecorrido;
+            tempoInicial = System.currentTimeMillis();
+            Arquivo.Universidade universidade = Arquivo.Universidade.parseFrom(fis);
+            tempoFinal = System.currentTimeMillis();
+            tempoDecorrido = tempoFinal - tempoInicial;
+            System.out.println("Tempo (UnMarshalling Protocol) em milissegundos:" + tempoDecorrido);
+
+            if(imprime) {
+                System.out.println("Universidade: " + universidade.getNome() + " " + universidade.getAnoInstituicao());
+                for (Arquivo.Professor professor : universidade.getProfessoresList()) {
+                    System.out.println("Professor: " + professor.getNome() + "  " + professor.getIdade() + "  " + professor.getAnoDoutorado());
+                    for (Arquivo.Aluno aluno : professor.getAlunosList()) {
+                        System.out.println("Aluno Nome: " + aluno.getNome() + "  " + aluno.getIdade() + "  " + +aluno.getIdade());
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void MarshallingProtocol(Arquivo.Universidade universidade,String File) throws IOException {
+        long tempoInicial, tempoFinal, tempoDecorrido;
+        tempoInicial = System.currentTimeMillis();
         byte[] bytes = universidade.toByteArray();
-
+        tempoFinal = System.currentTimeMillis();
+        tempoDecorrido = tempoFinal - tempoInicial;
+        System.out.println("Tempo (Marshalling Protocol) em milissegundos:" + tempoDecorrido);
         //save bytes into a file
-        FileOutputStream fos = new FileOutputStream("universidade.bin");
+        FileOutputStream fos = new FileOutputStream(File);
         fos.write(bytes);
         fos.flush();
         fos.close();
 
+    }
 
-        System.out.println(Arrays.toString(bytes));
+
+    public static void main(String[] args) throws  IOException {
+
+
+        Arquivo.Universidade universidade = Criacao(10000);
+        MarshallingProtocol(universidade,"universidade.bin");
+
+        UnMarshalling("universidade.bin");
+
+
+
+
 
     }
 }
